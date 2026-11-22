@@ -1,0 +1,10 @@
+# Superdense coding: Alice sends the bits 11 with one qubit
+qreg 2
+h 0
+cx 0 1
+# Alice encodes 11 on her qubit (q0)
+x 0
+z 0
+# Bob decodes
+cx 0 1
+h 0

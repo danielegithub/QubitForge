@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qubitforge"
+version = "0.1.0"
+description = "A quantum computer simulator in your terminal, made for learning."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+qubitforge = "qubitforge.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["qubitforge*"]
+
+[tool.setuptools.package-data]
+qubitforge = ["i18n/locales/*.json", "learn/examples/*.qf", "learn/lessons/*/*.md"]

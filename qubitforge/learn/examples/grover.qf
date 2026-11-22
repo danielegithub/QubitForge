@@ -1,0 +1,9 @@
+# Grover search on 2 qubits, marked item |11>
+qreg 2
+h 0 1
+cz 0 1
+h 0 1
+x 0 1
+cz 0 1
+x 0 1
+h 0 1
