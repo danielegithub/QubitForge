@@ -32,15 +32,20 @@ class GateSpec:
 
     @property
     def usage(self):
+        arguments = ["<angle>"] * self.params
         if self.controls == 1:
-            ctrl = " <c>"
-        else:
-            ctrl = "".join(f" <c{i}>" for i in range(1, self.controls + 1))
+            arguments.append("<c>")
+        elif self.controls > 1:
+            for number in range(1, self.controls + 1):
+                arguments.append(f"<c{number}>")
+
         if self.targets == 2:
-            tgt = " <a> <b>"
+            arguments.extend(["<a>", "<b>"])
+        elif self.controls:
+            arguments.append("<t>")
         else:
-            tgt = " <t>" if self.controls else " <q>"
-        return self.name + " <angle>" * self.params + ctrl + tgt
+            arguments.append("<q>")
+        return " ".join([self.name, *arguments])
 
     @property
     def kind(self):
@@ -51,17 +56,18 @@ class GateSpec:
         return "rotation" if self.params else "single"
 
 
-GATES = {g.name: g for g in [
-    *(GateSpec(n, n) for n in ("id", "x", "y", "z", "h", "s", "sdg", "t", "tdg")),
-    *(GateSpec(n, n, params=1) for n in ("rx", "ry", "rz", "p")),
-    GateSpec("cx", "x", controls=1),
-    GateSpec("cy", "y", controls=1),
-    GateSpec("cz", "z", controls=1),
-    GateSpec("ch", "h", controls=1),
-    GateSpec("cp", "p", controls=1, params=1),
-    GateSpec("ccx", "x", controls=2),
-    GateSpec("swap", "swap", targets=2),
-]}
+GATES = {name: GateSpec(name, name) for name in FIXED}
+
+for name in ("rx", "ry", "rz", "p"):
+    GATES[name] = GateSpec(name, name, params=1)
+
+for base in ("x", "y", "z", "h"):
+    name = "c" + base
+    GATES[name] = GateSpec(name, base, controls=1)
+
+GATES["cp"] = GateSpec("cp", "p", controls=1, params=1)
+GATES["ccx"] = GateSpec("ccx", "x", controls=2)
+GATES["swap"] = GateSpec("swap", "swap", targets=2)
 
 
 def matrix(base, params=()) -> Matrix:

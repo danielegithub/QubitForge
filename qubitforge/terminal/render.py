@@ -29,30 +29,36 @@ def fmt_angle(x):
     return f"-{s}" if num < 0 else s
 
 
-def state(m: Machine):
-    sv = m.sv
-    rows = [(i, a) for i, a in enumerate(sv.amps) if abs(a) ** 2 > 1e-12]
-    lines = [theme.c("dim", i18n.t("state.header", n=sv.n, last=sv.n - 1))]
-    for i, a in rows[:MAX_ROWS]:
-        p = abs(a) ** 2
-        amp = f"{a.real:+.4f}{a.imag:+.4f}i"
-        lines.append(f"  {amp}  {theme.c('cyan', f'|{sv.label(i)}>')}  "
-                     f"{p * 100:6.2f}%  {theme.c('green', bar(p))}")
-    if len(rows) > MAX_ROWS:
-        lines.append(theme.c("dim", i18n.t("state.hidden", n=len(rows) - MAX_ROWS)))
+def state(m: Machine, *, show_amplitudes=True):
+    vector = m.sv
+    if show_amplitudes:
+        header = i18n.t("state.header", n=vector.n, last=vector.n - 1)
+    else:
+        header = i18n.t("probs.header")
+    lines = [theme.c("dim", header)]
+
+    outcomes = []
+    for index, probability in enumerate(vector.probabilities()):
+        if probability > 1e-12:
+            outcomes.append((index, probability))
+
+    for index, probability in outcomes[:MAX_ROWS]:
+        label = theme.c("cyan", f"|{vector.label(index)}>")
+        histogram = theme.c("green", bar(probability))
+        row = f"{label}  {probability * 100:6.2f}%  {histogram}"
+        if show_amplitudes:
+            amplitude = vector.amps[index]
+            row = f"{amplitude.real:+.4f}{amplitude.imag:+.4f}i  {row}"
+        lines.append("  " + row)
+
+    hidden = len(outcomes) - MAX_ROWS
+    if hidden > 0:
+        lines.append(theme.c("dim", i18n.t("state.hidden", n=hidden)))
     return "\n".join(lines)
 
 
 def probs(m: Machine):
-    sv = m.sv
-    rows = [(i, p) for i, p in enumerate(sv.probabilities()) if p > 1e-12]
-    lines = [theme.c("dim", i18n.t("probs.header"))]
-    for i, p in rows[:MAX_ROWS]:
-        lines.append(f"  {theme.c('cyan', f'|{sv.label(i)}>')}  {p * 100:6.2f}%  "
-                     f"{theme.c('green', bar(p))}")
-    if len(rows) > MAX_ROWS:
-        lines.append(theme.c("dim", i18n.t("state.hidden", n=len(rows) - MAX_ROWS)))
-    return "\n".join(lines)
+    return state(m, show_amplitudes=False)
 
 
 def counts(res, shots):
