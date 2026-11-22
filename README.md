@@ -1,68 +1,37 @@
 # QubitForge
 
-A quantum computer in your terminal, made for learning. Pure Python, no dependencies.
+[English](README.md) · [Italiano](README.it.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Español](README.es.md) · [Português](README.pt.md)
 
-```
-╭─────────────────────────────────╮
-│  ⟨0|  Q U B I T F O R G E  |1⟩  │
-╰─────────────────────────────────╯
-qf[2q]> h 0
-qf[2q]> cx 0 1
-qf[2q]> circuit
-q0 ──H──●──
-        │
-q1 ─────X──
-```
+**Learn quantum circuits in your terminal**
 
-## Run
+QubitForge lets you try quantum operations on your computer. You can see which results are possible, try a measurement and save the steps to repeat later.
+
+## Start here
+
+Open a terminal in the QubitForge folder. With Python 3.10 or later, run this command. QubitForge needs no extra Python packages to run.
 
 ```bash
-python3 -m qubitforge            # or: pip install -e . && qubitforge
-python3 -m qubitforge --lang it  # interface language (en, it)
-python3 -m qubitforge my.qf      # run a script first, then open the prompt
+python3 -m qubitforge --lang en
 ```
 
-Options: `--lang`, `--seed` (reproducible measurements), `--fast` (skip boot animation), `--no-color`.
+Wait for `qf[2q]>`. Then type these lines one at a time and press Enter after each line.
 
-## What you can do
-
-| Area | Commands |
-|---|---|
-| Register | `qreg n`, `reset`, `undo` |
-| Gates | `h x y z s t id rx ry rz p cx cy cz ch cp ccx swap sdg tdg` |
-| Inspect | `state`, `probs`, `bloch [q]`, `circuit`, `qasm` |
-| Measure | `measure [q\|all]`, `run [shots]` |
-| Files | `save f.qf`, `load f.qf` |
-| Learn | `lesson [n]`, `example [name]`, `explain on`, `help [cmd]` |
-
-Gates take parameters first, then qubits: `rx pi/2 0`, `cx 0 1`, `ccx 0 1 2`. Single-qubit gates broadcast: `h all`, `x 0 2`.
-Convention: `q0` is the rightmost bit of a state label, `|q2 q1 q0>`.
-
-## Layout
-
-```
-qubitforge/
-├── core/       the "chip": gates, state vector, machine, analysis (knows nothing about the terminal)
-├── lang/       the command language: registry, dispatcher, angle expressions
-├── terminal/   boot animation, prompt loop, rendering, colors
-├── i18n/       translations: locales/<code>.json
-└── learn/      lessons/<code>/*.md and examples/*.qf
-tests/
+```qf
+qreg 1
+h 0
+probs
 ```
 
-## Add a language
+`qreg 1` starts with one qubit at 0. `h 0` makes 0 and 1 equally likely. `probs` shows both at 50%. A qubit is the part of the simulator that gives you a 0 or a 1 when you measure it. Use `quit` to leave.
 
-1. Copy `qubitforge/i18n/locales/en.json` to `<code>.json` and translate it (add command `aliases` if you like).
-2. Optionally add lessons in `qubitforge/learn/lessons/<code>/` (missing ones fall back to English).
+QubitForge displays its menus and built-in lessons in English or Italian. The commands below work with either language.
 
-The test suite fails if a language is missing any key.
+## Guides
 
-## Tests
-
-```bash
-python3 -m unittest discover -s tests -t .
-```
+- [First circuit, step by step](docs/en/getting-started.md)
+- [Commands with examples](docs/en/reference.md)
+- [Project structure and translations](docs/en/contributing.md)
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+[MIT](LICENSE)
